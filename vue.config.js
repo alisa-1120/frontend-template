@@ -22,6 +22,7 @@ module.exports = defineConfig({
   transpileDependencies: true,
   lintOnSave:false,
   configureWebpack: {
+    name:'template',
     resolve: {
       alias: {
         components: '@/components',
@@ -35,7 +36,7 @@ module.exports = defineConfig({
     }),
     Components({
       resolvers: [ElementPlusResolver()]
-    })],
+    })]
   },
   devServer:{
     https:false

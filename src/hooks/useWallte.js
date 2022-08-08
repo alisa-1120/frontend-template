@@ -57,8 +57,8 @@ export default function UseWallet() {
       return;
     }
     provider.on('disconnect', () => resetApp());
+
     provider.on('accountsChanged', async (accounts) => {
-      // eslint-disable-next-line prefer-destructuring
       walletObj.userAddress = accounts[0];
       await getAccountAssets();
     });
@@ -73,7 +73,6 @@ export default function UseWallet() {
   const onConnect = async () => {
 
     const provider = await web3Modal.connect();
-
 
     await subscribeProvider(provider);
 
@@ -90,6 +89,7 @@ export default function UseWallet() {
     walletObj.chainId = chainId;
     walletObj.networkId = networkId;
     await getAccountAssets();
+    
   };
 
   return {
