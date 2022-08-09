@@ -1,6 +1,5 @@
-import {
-  ref, reactive, getCurrentInstance, toRefs,
-} from 'vue';
+import { ref, reactive, getCurrentInstance, toRefs } from 'vue';
+import { useStore } from "vuex"
 import Web3, { utils } from 'web3';
 import Web3Modal from 'web3modal';
 import { getChainData } from '@/web3/tools';
@@ -17,10 +16,16 @@ const INITIAL_STATE = {
 export default function UseWallet() {
   const { ctx: _this } = getCurrentInstance();
 
-  const walletObj = reactive({ ...INITIAL_STATE });
+  const store = useStore()  
+  
+  const walletInfo = store.getters.getWalletInfo
+
+  const walletObj = reactive({ ...walletInfo });
+ 
+
   const fetching = ref(false);
   const assets = ref(0);
-  //https://github.com/Web3Modal/web3modal#web3modal
+
   const web3Modal = new Web3Modal({
     theme: 'dark',
     network: getChainData(walletObj.chainId).network,
@@ -34,24 +39,24 @@ export default function UseWallet() {
     if (web3 && web3.currentProvider && web3.currentProvider.close) {
       await web3.currentProvider.close();
     }
-
     web3Modal.clearCachedProvider();
     assets.value = 0;
     Object.keys(INITIAL_STATE).forEach((e) => {
       walletObj[e] = INITIAL_STATE[e];
     });
+    store.commit('disConnect',INITIAL_STATE)
     _this.$forceUpdate();
   };
+  
   const getUserBalance = () => walletObj.web3.eth
     .getBalance(walletObj.userAddress)
     .then((res) => (res ? utils.fromWei(res.toString(), 'ether') : 0));
 
   const getAccountAssets = async () => {
     fetching.value = true;
-    // get account balances
-
     assets.value = await getUserBalance();
   };
+  
   const subscribeProvider = async (provider) => {
     if (!provider.on) {
       return;
@@ -71,16 +76,12 @@ export default function UseWallet() {
   };
 
   const onConnect = async () => {
-
     const provider = await web3Modal.connect();
-
     await subscribeProvider(provider);
-
     const web3 = new Web3(provider);
     const accounts = await web3.eth.getAccounts();
     const address = accounts[0];
     const networkId = await web3.eth.net.getId();
-
     const chainId = await web3.eth.getChainId(); 
     walletObj.web3 = web3;
     walletObj.provider = provider;
@@ -88,8 +89,9 @@ export default function UseWallet() {
     walletObj.userAddress = address;
     walletObj.chainId = chainId;
     walletObj.networkId = networkId;
+
+    store.commit('connect',walletObj)
     await getAccountAssets();
-    
   };
 
   return {
