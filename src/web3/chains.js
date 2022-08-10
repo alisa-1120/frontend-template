@@ -1,5 +1,21 @@
 const supportedChains = [
   {
+    name: 'polysmartchain',
+    short_name: 'psc',
+    chain: 'PSC',
+    network: 'polysmartchain',
+    chain_id: 6999,
+    network_id: 6999,
+    rpc_url: 'https://seed2.polysmartchain.com/',
+    native_currency: {
+      symbol: 'PSC',
+      name: 'polysmartchain',
+      decimals: '18',
+      contractAddress: '',
+      balance: '',
+    },
+  },
+  /* {
     name: 'Ethereum Mainnet',
     short_name: 'eth',
     chain: 'ETH',
@@ -190,7 +206,7 @@ const supportedChains = [
       contractAddress: '',
       balance: '',
     },
-  },
+  }, */
 ];
 
 export default supportedChains;

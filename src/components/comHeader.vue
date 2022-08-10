@@ -13,11 +13,12 @@
   </div>
 </template>
 <script setup>
-import { computed } from 'vue';
+import { computed,onMounted } from 'vue';
 import { utils } from 'web3';
 import useWallet from '../hooks/useWallte';
-
-
+import { useStore } from "vuex"
+import { getMasterchefAddress } from "../utils/addressHelpers"
+import abi from "../config/abi/masterchef3.json"
 const {
   onConnect,
   connected,
@@ -30,15 +31,25 @@ const {
   getAccountAssets,
 } = useWallet();
 
+onMounted(async () => {
+  const store = useStore()
+  const connectInfo = store.getters['getWalletInfo'];
+  if(connectInfo.connected){
+    await onConnect();
+  }
+})
+
+
+
+const masterchef = getMasterchefAddress()
+
+
 const handleWalletConnect = async () => {
   await onConnect();
-  if (connected) {
-    console.log('afterConnectdWallet', connected);
-  }
 };
-// const contract = computed(
-//   () => new web3.value.eth.Contract(USDT_API, USDT_ADDRESS),
-// );
+
+
+
 // function approve() {
 //   return contract.value.methods
 //     .approve(USDT_ADDRESS, utils.toHex(utils.toWei('1000000000000000000000000000', 'gwei')))

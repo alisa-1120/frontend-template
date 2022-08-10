@@ -10,19 +10,15 @@ const INITIAL_STATE = {
   provider: null,
   userAddress: '',
   connected: false,
-  chainId: 1,
-  networkId: 1,
+  chainId: 6999,
+  networkId: 6999,
 };
+
 export default function UseWallet() {
+
   const { ctx: _this } = getCurrentInstance();
-
   const store = useStore()  
-  
-  const walletInfo = store.getters.getWalletInfo
-
-  const walletObj = reactive({ ...walletInfo });
- 
-
+  const walletObj = reactive({ ...INITIAL_STATE });
   const fetching = ref(false);
   const assets = ref(0);
 
@@ -32,8 +28,7 @@ export default function UseWallet() {
     cacheProvider: true,
     providerOptions,
   });
-
-  // methods wallte.js
+  
   const resetApp = async () => {
     const { web3 } = walletObj;
     if (web3 && web3.currentProvider && web3.currentProvider.close) {
@@ -44,13 +39,19 @@ export default function UseWallet() {
     Object.keys(INITIAL_STATE).forEach((e) => {
       walletObj[e] = INITIAL_STATE[e];
     });
-    store.commit('disConnect',INITIAL_STATE)
+
+    const obj = {
+      connected:false,
+    }
+    store.commit('disConnect',obj)
     _this.$forceUpdate();
   };
   
-  const getUserBalance = () => walletObj.web3.eth
+  const getUserBalance = () => { 
+     return walletObj.web3?walletObj.web3.eth
     .getBalance(walletObj.userAddress)
-    .then((res) => (res ? utils.fromWei(res.toString(), 'ether') : 0));
+    .then((res) => (res ? utils.fromWei(res.toString(), 'ether') : 0)):0;
+  }
 
   const getAccountAssets = async () => {
     fetching.value = true;
@@ -71,6 +72,9 @@ export default function UseWallet() {
       const networkId = await walletObj?.web3?.eth?.net.getId();
       walletObj.chainId = chainId;
       walletObj.networkId = networkId;
+      const web3 = new Web3(provider);
+      walletObj.web3 = web3
+      store.commit('setWeb3',web3)
       await getAccountAssets();
     });
   };
@@ -79,18 +83,25 @@ export default function UseWallet() {
     const provider = await web3Modal.connect();
     await subscribeProvider(provider);
     const web3 = new Web3(provider);
+
     const accounts = await web3.eth.getAccounts();
     const address = accounts[0];
     const networkId = await web3.eth.net.getId();
     const chainId = await web3.eth.getChainId(); 
+
     walletObj.web3 = web3;
     walletObj.provider = provider;
     walletObj.connected = true;
     walletObj.userAddress = address;
     walletObj.chainId = chainId;
     walletObj.networkId = networkId;
+    const obj = {
+      connected:true,
+    }
 
-    store.commit('connect',walletObj)
+    store.commit('connect',obj)
+    store.commit('setWeb3',web3)
+
     await getAccountAssets();
   };
 
@@ -100,7 +111,6 @@ export default function UseWallet() {
     assets,
     resetApp,
     getAccountAssets,
-    //
     web3Modal,
     // methods
     onConnect,

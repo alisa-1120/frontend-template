@@ -4,9 +4,9 @@
 </template>
 
 <script>
-import ConnectWallte from './components/ConnectWallteExample.vue';
+import ConnectWallte from './components/comHeader.vue';
 export default {
-    components: {
+  components: {
         ConnectWallte,
   },
 }

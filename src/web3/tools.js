@@ -1,8 +1,11 @@
 import supportedChains from './chains';
 
 export function getChainData(chainId) {
+
+  console.log(chainId)
+
   const chainData = supportedChains.filter((chain) => chain.chain_id === chainId)[0];
-  console.log(chainId);
+ 
   if (!chainData) {
     throw new Error('ChainId missing or not supported');
   }

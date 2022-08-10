@@ -7,7 +7,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    ConnectWallteExample: typeof import('./src/components/ConnectWallteExample.vue')['default']
+    ComHeader: typeof import('./src/components/comHeader.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
