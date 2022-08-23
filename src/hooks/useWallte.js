@@ -23,7 +23,7 @@ export default function UseWallet() {
   const assets = ref(0);
 
   const web3Modal = new Web3Modal({
-    theme: 'dark',
+    theme: 'light',
     network: getChainData(walletObj.chainId).network,
     cacheProvider: true,
     providerOptions,

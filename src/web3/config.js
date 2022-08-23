@@ -5,6 +5,10 @@ const providerOptions = {
    // https://docs.walletconnect.org/
    walletconnect:{
     package:WalletConnectProvider,
+    display:{
+      name:'WalletConnect',
+      description:''
+    },
     options: {
         infuraId: 'xxxxxxxxxx' // TODO infuraId
     }
@@ -21,7 +25,8 @@ const providerOptions = {
    },
    binancechainwallet: {
     display:{
-      name:'Binance Chain Wallet'
+      name:'Binance Chain Wallet',
+
     },
     package: true
   }
